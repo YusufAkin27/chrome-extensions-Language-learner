@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelimelerim - LanguageLearner</title>
+  <link rel="stylesheet" href="src/css/words.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-container">
+        <img src="src/assets/logo.png" alt="LanguageLearner Logo" class="logo">
+        <h1>LanguageLearner</h1>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="#" class="active" data-tab="words">Kelimelerim</a></li>
+          <li><a href="#" data-tab="stats">İstatistikler</a></li>
+          <li><a href="#" data-tab="settings">Ayarlar</a></li>
+          <li><a href="#" data-tab="about">Hakkında</a></li>
+        </ul>
+      </nav>
+      <div class="api-status">
+        <span id="api-status-icon">⚡</span>
+        <span id="api-status-text">API: 0/5000</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+      <!-- Words Tab - Active by default -->
+      <section id="words-tab" class="tab-content active">
+        <div class="words-header">
+          <h2>Kaydedilen Kelimelerim</h2>
+          <div class="words-controls">
+            <div class="search-bar">
+              <input type="text" id="word-search" placeholder="Kelime ara...">
+              <button id="search-btn">🔍</button>
+            </div>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="all">Tümü</button>
+              <button class="filter-btn" data-filter="new">Yeni</button>
+              <button class="filter-btn" data-filter="learning">Öğreniliyor</button>
+              <button class="filter-btn" data-filter="reviewing">Tekrarlama</button>
+              <button class="filter-btn" data-filter="learned">Öğrenildi</button>
+            </div>
+            <div class="sort-control">
+              <select id="sort-select">
+                <option value="recent">En Son Eklenenler</option>
+                <option value="alphabetical">Alfabetik (A-Z)</option>
+                <option value="progress">İlerleme Durumuna Göre</option>
+                <option value="next-review">Tekrar Tarihine Göre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="words-container">
+          <div id="words-grid" class="words-grid">
+            <!-- Words will be loaded here via JavaScript -->
+            <div id="loading-indicator">Kelimeler yükleniyor...</div>
+          </div>
+          
+          <div id="empty-state" class="empty-state" style="display: none;">
+            <img src="src/assets/empty.svg" alt="Kayıtlı kelime yok" class="empty-icon">
+            <h3>Henüz kayıtlı kelime yok</h3>
+            <p>Youtube veya Netflix'te video izlerken kelimelerin üzerine tıklayıp kaydedin!</p>
+          </div>
+        </div>
+
+        <div class="words-actions">
+          <button id="export-btn" class="action-btn secondary">Dışa Aktar</button>
+          <button id="import-btn" class="action-btn secondary">İçe Aktar</button>
+          <button id="clear-btn" class="action-btn danger">Tüm Kelimeleri Sil</button>
+        </div>
+      </section>
+
+      <!-- Stats Tab -->
+      <section id="stats-tab" class="tab-content">
+        <h2>İstatistikler</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <div class="stat-value" id="total-words">0</div>
+            <div class="stat-label">Toplam Kelime</div>
+          </div>
+          
+          <div class="stat-card new">
+            <div class="stat-value" id="new-words">0</div>
+            <div class="stat-label">Yeni</div>
+          </div>
+          
+          <div class="stat-card learning">
+            <div class="stat-value" id="learning-words">0</div>
+            <div class="stat-label">Öğreniliyor</div>
+          </div>
+          
+          <div class="stat-card reviewing">
+            <div class="stat-value" id="reviewing-words">0</div>
+            <div class="stat-label">Tekrarlama</div>
+          </div>
+          
+          <div class="stat-card learned">
+            <div class="stat-value" id="learned-words">0</div>
+            <div class="stat-label">Öğrenildi</div>
+          </div>
+        </div>
+        
+        <div class="progress-chart">
+          <h3>Öğrenme İlerleme</h3>
+          <div class="progress-bar-container">
+            <div class="progress-segment new" id="new-progress"></div>
+            <div class="progress-segment learning" id="learning-progress"></div>
+            <div class="progress-segment reviewing" id="reviewing-progress"></div>
+            <div class="progress-segment learned" id="learned-progress"></div>
+          </div>
+          <div class="progress-labels">
+            <span>0%</span>
+            <span>25%</span>
+            <span>50%</span>
+            <span>75%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        
+        <div class="activity-stats">
+          <h3>Aktivite</h3>
+          <div class="activity-grid">
+            <div class="activity-card">
+              <h4>Son 7 Günde</h4>
+              <div class="activity-value" id="last-week-added">0</div>
+              <div class="activity-label">Yeni Kelime</div>
+            </div>
+            
+            <div class="activity-card">
+              <h4>Son 30 Günde</h4>
+              <div class="activity-value" id="last-month-added">0</div>
+              <div class="activity-label">Yeni Kelime</div>
+            </div>
+            
+            <div class="activity-card">
+              <h4>Son 30 Günde</h4>
+              <div class="activity-value" id="last-month-learned">0</div>
+              <div class="activity-label">Öğrenilen Kelime</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="settings-tab" class="tab-content">
+        <h2>Ayarlar</h2>
+        
+        <div class="settings-container">
+          <div class="settings-group">
+            <h3>Dil Ayarları</h3>
+            
+            <div class="setting-item">
+              <label for="original-lang">Orijinal Dil:</label>
+              <select id="original-lang">
+                <option value="en">İngilizce</option>
+                <option value="de">Almanca</option>
+                <option value="fr">Fransızca</option>
+                <option value="es">İspanyolca</option>
+                <option value="it">İtalyanca</option>
+              </select>
+            </div>
+            
+            <div class="setting-item">
+              <label for="translation-lang">Çeviri Dili:</label>
+              <select id="translation-lang">
+                <option value="tr">Türkçe</option>
+                <option value="en">İngilizce</option>
+                <option value="de">Almanca</option>
+                <option value="fr">Fransızca</option>
+                <option value="es">İspanyolca</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="settings-group">
+            <h3>Video Ayarları</h3>
+            
+            <div class="setting-item">
+              <label for="auto-translate">Otomatik Çeviri:</label>
+              <label class="switch">
+                <input type="checkbox" id="auto-translate" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <label for="auto-speak">Otomatik Telaffuz:</label>
+              <label class="switch">
+                <input type="checkbox" id="auto-speak">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <label for="auto-subtitle">Otomatik Altyazı Penceresi:</label>
+              <label class="switch">
+                <input type="checkbox" id="auto-subtitle" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <label for="speech-recognition">Konuşma Tanıma:</label>
+              <label class="switch">
+                <input type="checkbox" id="speech-recognition" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="settings-group">
+            <h3>Öğrenme Ayarları</h3>
+            
+            <div class="setting-item">
+              <label for="progress-days">Kelime İlerleme Süresi (gün):</label>
+              <input type="number" id="progress-days" min="1" max="30" value="7">
+            </div>
+          </div>
+          
+          <div class="settings-actions">
+            <button id="save-settings" class="action-btn primary">Ayarları Kaydet</button>
+            <button id="reset-settings" class="action-btn secondary">Varsayılana Sıfırla</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Tab -->
+      <section id="about-tab" class="tab-content">
+        <h2>Hakkında</h2>
+        
+        <div class="about-container">
+          <div class="about-logo">
+            <img src="src/assets/logo.png" alt="LanguageLearner Logo" class="large-logo">
+            <h2>LanguageLearner</h2>
+            <div class="version">Versiyon 1.2.0</div>
+          </div>
+          
+          <div class="about-description">
+            <p>LanguageLearner, yabancı dil videoları izlerken yeni kelimeler öğrenmenizi kolaylaştıran bir tarayıcı eklentisidir. Netflix ve YouTube'da altyazılar üzerinde çalışarak, film ve videolardan kelime dağarcığınızı geliştirmenize yardımcı olur.</p>
+            
+            <h3>Özellikler</h3>
+            <ul>
+              <li>Netflix ve YouTube'da video altyazılarını çevirme</li>
+              <li>Kelimeleri anında çevirme ve kaydetme</li>
+              <li>Kelime telaffuzlarını dinleme</li>
+              <li>Aralıklı tekrar sistemi ile kelime öğrenme</li>
+              <li>Konuşma tanıma ile altyazısız videolarda çalışma</li>
+              <li>Öğrenme istatistiklerini takip etme</li>
+            </ul>
+            
+            <h3>Destek</h3>
+            <p>Sorun veya önerileriniz için:</p>
+            <a href="mailto:support@languagelearner.com" class="contact-link">support@languagelearner.com</a>
+            
+            <div class="social-links">
+              <a href="#" class="social-link">Twitter</a>
+              <a href="#" class="social-link">GitHub</a>
+              <a href="#" class="social-link">Website</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Word Detail Modal -->
+  <div id="word-detail-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-word">Kelime</h3>
+        <button id="close-modal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="word-info">
+          <div class="word-translation" id="modal-translation">Çeviri</div>
+          <div class="word-progress-info">
+            <div class="progress-label">İlerleme Durumu: <span id="modal-status">Yeni</span></div>
+            <div class="progress-bar">
+              <div id="modal-progress-bar" class="progress-segment" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="word-dates">
+            <div>Eklenme: <span id="modal-created">-</span></div>
+            <div>Son görülme: <span id="modal-last-viewed">-</span></div>
+            <div>Sonraki tekrar: <span id="modal-next-review">-</span></div>
+          </div>
+          <div class="word-actions">
+            <button id="modal-speak" class="action-btn secondary">Telaffuz Et</button>
+            <button id="modal-update" class="action-btn primary">İlerlemeyi Güncelle</button>
+            <button id="modal-delete" class="action-btn danger">Sil</button>
+          </div>
+        </div>
+        <div class="word-contexts">
+          <h4>Video Bağlamları:</h4>
+          <div id="modal-contexts" class="contexts-list">
+            <!-- Contexts will be added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/js/words.js"></script>
+</body>
+</html> 

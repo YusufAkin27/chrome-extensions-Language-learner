@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LanguageLearner</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <img src="../assets/logo.png" alt="LanguageLearner Logo" class="logo">
+      <h1>LanguageLearner <span class="version">1.2.0</span></h1>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-navigation">
+      <button class="tab-button active" data-tab="words-tab">Kelimelerim</button>
+      <button class="tab-button" data-tab="stats-tab">İstatistikler</button>
+      <button class="tab-button" data-tab="settings-tab">Ayarlar</button>
+      <button class="tab-button" data-tab="about-tab">Hakkında</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content">
+      <!-- Words Tab -->
+      <div class="tab-pane active" id="words-tab">
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Kelime ara...">
+          <div class="filter-container">
+            <button class="filter-button active" data-filter="all">Tümü</button>
+            <button class="filter-button" data-filter="new">Yeni</button>
+            <button class="filter-button" data-filter="learning">Öğreniliyor</button>
+            <button class="filter-button" data-filter="learned">Öğrenildi</button>
+            <button class="filter-button" data-filter="difficult">Zor</button>
+          </div>
+          <div class="sort-container">
+            <select id="sort-select">
+              <option value="date-desc">Tarihe Göre (Yeni-Eski)</option>
+              <option value="date-asc">Tarihe Göre (Eski-Yeni)</option>
+              <option value="alpha-asc">Alfabetik (A-Z)</option>
+              <option value="alpha-desc">Alfabetik (Z-A)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="word-list-container">
+          <div id="word-list"></div>
+          <div id="empty-state" class="empty-state">
+            <p>Henüz kaydedilmiş kelime yok.</p>
+            <p>Netflix veya YouTube'da bir videoda altyazı açarak kelimeleri kaydetmeye başlayabilirsiniz.</p>
+          </div>
+        </div>
+        
+        <div class="word-actions">
+          <button id="export-csv" class="action-button">CSV İndir</button>
+          <button id="export-json" class="action-button">JSON İndir</button>
+          <button id="clear-words" class="action-button danger">Tüm Kelimeleri Sil</button>
+        </div>
+        
+        <div class="api-status">
+          <p>API Durumu: <span id="api-calls">0</span>/<span id="api-limit">5000</span> çeviri</p>
+          <p>Yenilenme: <span id="api-reset">Bugün</span></p>
+        </div>
+      </div>
+
+      <!-- Stats Tab -->
+      <div class="tab-pane" id="stats-tab">
+        <div class="progress-container">
+          <h3>Öğrenme İlerlemesi</h3>
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+          <p><span id="learned-percent">0%</span> tamamlandı</p>
+        </div>
+        
+        <div class="stats-cards">
+          <div class="stats-card">
+            <h4>Yeni</h4>
+            <p id="new-count">0</p>
+          </div>
+          <div class="stats-card">
+            <h4>Öğreniliyor</h4>
+            <p id="learning-count">0</p>
+          </div>
+          <div class="stats-card">
+            <h4>Öğrenildi</h4>
+            <p id="learned-count">0</p>
+          </div>
+          <div class="stats-card">
+            <h4>Zor</h4>
+            <p id="difficult-count">0</p>
+          </div>
+        </div>
+        
+        <div class="stats-detail">
+          <h3>Aktivite</h3>
+          <p>Son 7 günde <span id="recent-added">0</span> yeni kelime eklediniz.</p>
+          <p>Son 30 günde <span id="monthly-progress">0</span> kelimeyi öğrenildi olarak işaretlediniz.</p>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-pane" id="settings-tab">
+        <div class="settings-section">
+          <h3>Dil Ayarları</h3>
+          <div class="setting-item">
+            <label for="original-language">Orijinal Dil:</label>
+            <select id="original-language">
+              <option value="en">İngilizce</option>
+              <option value="fr">Fransızca</option>
+              <option value="de">Almanca</option>
+              <option value="es">İspanyolca</option>
+              <option value="it">İtalyanca</option>
+              <option value="ja">Japonca</option>
+              <option value="ko">Korece</option>
+              <option value="ru">Rusça</option>
+            </select>
+          </div>
+          
+          <div class="setting-item">
+            <label for="translation-language">Çeviri Dili:</label>
+            <select id="translation-language">
+              <option value="tr">Türkçe</option>
+              <option value="en">İngilizce</option>
+              <option value="fr">Fransızca</option>
+              <option value="de">Almanca</option>
+              <option value="es">İspanyolca</option>
+              <option value="it">İtalyanca</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Özellikler</h3>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="auto-translate" checked>
+            <label for="auto-translate">Otomatik Çeviri (Hover)</label>
+          </div>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="auto-speak">
+            <label for="auto-speak">Otomatik Sesli Okuma</label>
+          </div>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="show-control-panel" checked>
+            <label for="show-control-panel">Kontrol Panelini Göster</label>
+          </div>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="extension-enabled" checked>
+            <label for="extension-enabled">Eklentiyi Etkinleştir</label>
+          </div>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="show-subtitle-popup" checked>
+            <label for="show-subtitle-popup">Altyazı Popup'unu Göster</label>
+          </div>
+          
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="use-speech-recognition" checked>
+            <label for="use-speech-recognition">Ses Tanıma Özelliğini Kullan (Altyazısız Videolar İçin)</label>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Öğrenme Ayarları</h3>
+          
+          <div class="setting-item">
+            <label for="word-progress-days">Öğrenildi olarak işaretlemek için geçmesi gereken gün:</label>
+            <input type="number" id="word-progress-days" min="1" max="30" value="5">
+          </div>
+        </div>
+        
+        <button id="save-settings" class="action-button primary">Ayarları Kaydet</button>
+        <button id="reset-settings" class="action-button">Varsayılana Sıfırla</button>
+      </div>
+
+      <!-- About Tab -->
+      <div class="tab-pane" id="about-tab">
+        <div class="about-content">
+          <h3>LanguageLearner Hakkında</h3>
+          <p>LanguageLearner, Netflix ve YouTube gibi platformlarda dil öğrenmenizi kolaylaştırmak için tasarlanmış bir eklentidir.</p>
+          
+          <h4>Özellikler:</h4>
+          <ul>
+            <li>Altyazılardaki kelimeleri çevirme ve kaydetme</li>
+            <li>Sesli okuma ile doğru telaffuzu öğrenme</li>
+            <li>Kelime öğrenme durumunuzu takip etme</li>
+            <li>Altyazı popup'u ile çevirileri kolayca görüntüleme</li>
+            <li>Oynatma hızını ve kontrollerini özelleştirme</li>
+            <li>Kelime listesini dışa aktarma (CSV, JSON)</li>
+            <li>Çeşitli istatistiklerle ilerlemenizi görme</li>
+          </ul>
+          
+          <p>Versiyon: <span id="version-number">1.2.0</span></p>
+          <p>&copy; 2023 LanguageLearner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/popup.js"></script>
+</body>
+</html> 

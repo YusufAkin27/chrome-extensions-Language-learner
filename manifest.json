@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+  "name": "Netflix & YouTube Language Learner",
+  "version": "0.1",
+  "description": "Netflix ve YouTube'daki içerikleri tercüme ederek dil öğrenmeyi hızlandırır.",
+  "background": {
+    "scripts": ["src/js/background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "src/assets/icon-16.png",
+      "48": "src/assets/icon-48.png",
+      "128": "src/assets/icon-128.png"
+    },
+    "default_title": "Language Learner"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "http://*/*",
+    "https://*/*",
+    "scripting"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*", "*://*.youtube.com/*"],
+      "js": ["src/js/content.js"],
+      "css": ["src/css/content.css"]
+    }
+  ],
+  "icons": {
+    "16": "src/assets/icon-16.png",
+    "48": "src/assets/icon-48.png",
+    "128": "src/assets/icon-128.png"
+  },
+  "web_accessible_resources": [
+    "src/assets/*",
+    "words.html",
+    "dictionary.json"
+  ]
+} 
